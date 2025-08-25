@@ -1,5 +1,5 @@
 // src/App.tsx
-
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Header from "./components/Header";
@@ -14,8 +14,7 @@ import NewArrivalsSlider from "./components/NewArrivalsSlider";
 import USPs from "./components/USPs";
 import BlogPreview from "./components/BlogPreview";
 import InstagramCTA from "./components/InstagramCTA";
-import SubcategoryProductsPage from './components/SubcategoryProductsPage'
-import categories from '../../backend/data/categories.json';
+import SubcategoryProductsPage from './components/SubcategoryProductsPage';
 import TopCategoriesSection from './components/TopCategoriesSection';
 import PromotionalBanner from './components/PromotionalBanner';
 import TopSelectionFilter from './components/TopSelectionFilter';
@@ -26,8 +25,15 @@ import Register from './components/pages/connect/Register';
 import Login from './components/pages/connect/Login';
 import Dashboard from './components/pages/connect/Dashboard';
 
+import { fetchCategories } from "./services/api";
+
 function Home() {
+  const [categories, setCategories] = useState<any[]>([]);
   const filters = ['Nouveautés', 'Meilleures ventes', 'Tendance', 'Promotions'];
+
+  useEffect(() => {
+    fetchCategories().then(setCategories).catch(console.error);
+  }, []);
 
   const handleFilterChange = (filter: string) => {
     console.log("Filtre sélectionné :", filter);
@@ -64,7 +70,6 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/account" element={<Dashboard />} />
-
           </Routes>
           <Footer />
         </CartProvider>

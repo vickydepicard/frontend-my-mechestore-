@@ -1,19 +1,19 @@
-// src/components/TopCate
+// src/components/TopCategoriesSection.tsx
 import { useNavigate } from 'react-router-dom';
 
 interface Item {
   name: string;
   slug: string;
   description: string;
-  metadata: { displayOrder: number };
+  metadata?: { displayOrder: number }; // optionnel
 }
 
 interface Category {
   name: string;
   slug: string;
   description: string;
-  items: Item[];
-  metadata: { displayOrder: number; isActive: boolean };
+  items?: Item[]; // optionnel
+  metadata?: { displayOrder: number; isActive: boolean }; // optionnel
 }
 
 interface Props {
@@ -23,10 +23,18 @@ interface Props {
 export default function TopCategoriesSection({ categories }: Props) {
   const navigate = useNavigate();
 
-  // Trier les catégories et leurs sous-items
+  if (!categories || categories.length === 0) {
+    return (
+      <section className="py-16 bg-gray-50 text-center">
+        <p className="text-gray-600">Aucune catégorie disponible.</p>
+      </section>
+    );
+  }
+
+  // Trier les catégories actives
   const sortedCats = [...categories]
-    .filter(c => c.metadata.isActive)
-    .sort((a, b) => a.metadata.displayOrder - b.metadata.displayOrder);
+    .filter(c => c.metadata?.isActive) // ← safe
+    .sort((a, b) => (a.metadata?.displayOrder ?? 0) - (b.metadata?.displayOrder ?? 0));
 
   return (
     <section className="py-16 bg-gray-50">
@@ -43,14 +51,13 @@ export default function TopCategoriesSection({ categories }: Props) {
         {sortedCats.map(cat => (
           <div
             key={cat.slug}
-            className="bg-white rounded-xl shadow hover:shadow-lg transition p-6 flex flex-col"
+            className="bg-white rounded-xl shadow hover:shadow-lg transition p-6 flex flex-col cursor-pointer"
             onClick={() => navigate(`/category/${cat.slug}`)}
-            role="button"
           >
             <h3 className="text-xl font-semibold text-gray-800 mb-2">{cat.name}</h3>
             <ul className="text-gray-600 text-sm flex-1 mb-4 space-y-1">
               {cat.items
-                .sort((a, b) => a.metadata.displayOrder - b.metadata.displayOrder)
+                ?.sort((a, b) => (a.metadata?.displayOrder ?? 0) - (b.metadata?.displayOrder ?? 0))
                 .slice(0, 3)
                 .map(item => (
                   <li key={item.slug}>{item.name}</li>

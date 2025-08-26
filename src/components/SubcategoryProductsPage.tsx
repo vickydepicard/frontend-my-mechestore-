@@ -35,7 +35,7 @@ export default function SubcategoryProductsPage() {
       _id: product._id,
       name: product.name,
       image: product.images?.[0] || "/placeholder.jpg",
-      price: variant?.prix ?? product.price,
+      price: variant?.prix ?? product.price ?? 0,
       quantity: 1,
       stock: variant?.stock,
     };
